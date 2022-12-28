@@ -1,41 +1,16 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
-/*
-  initialization of 'posts' state
+/**
+ * An object that defines the post state
  */
-const initialState = [
-  {
-    id: '1',
-    title: 'Learning Redux Toolkit',
-    content: "I've heard good things.",
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0,
-    },
-  },
-  {
-    id: '2',
-    title: 'Slices...',
-    content: 'The more I slice the more I want pizza',
-    date: sub(new Date(), { minutes: 5 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0,
-    },
-  },
-];
 
-/*
-  posts is an array of objects
- */
+const initialState = {
+  posts: [],
+  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  error: null,
+};
+
 const postSlice = createSlice({
   name: 'posts',
   initialState,
@@ -43,7 +18,7 @@ const postSlice = createSlice({
     // a reducer for adding a new post.
     postAdded: {
       reducer(state, action) {
-        state.push(action.payload);
+        state.posts.push(action.payload);
       },
       // prepared callback
       prepare(title, content, userId) {
@@ -67,7 +42,7 @@ const postSlice = createSlice({
     },
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload;
-      const existingPost = state.find((post) => post.id === postId);
+      const existingPost = state.posts.find((post) => post.id === postId);
       if (existingPost) {
         existingPost.reactions[reaction]++;
       }
@@ -76,6 +51,6 @@ const postSlice = createSlice({
 });
 
 // Exports
-export const selectAllPosts = (state) => state.posts;
+export const selectAllPosts = (state) => state.posts.posts;
 export const { postAdded, reactionAdded } = postSlice.actions;
 export default postSlice.reducer;
