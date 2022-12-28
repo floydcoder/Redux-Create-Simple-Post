@@ -6,17 +6,12 @@ import {
   fetchPosts,
 } from './postSlice';
 import { useEffect } from 'react';
-import PostAuthor from './PostAuthor';
-import TimeAgo from './TimeAgo';
-import ReactionsButtons from './ReactionsButtons';
+import PostsExcerpt from './PostsExcerpt';
 
 const PostList = () => {
   const dispatch = useDispatch();
-  /*
-  the posts state is being retrieve from the postSlice 'name' key, which now is globally available through the store provider
-   */
-  const posts = useSelector(selectAllPosts);
 
+  const posts = useSelector(selectAllPosts);
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
 
@@ -26,26 +21,19 @@ const PostList = () => {
     }
   }, [postsStatus, dispatch]);
 
-  /*
-    order the post by the most recent one to the latest.
-   */
-  const orderedPosts = posts
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
-  /*
-  posts is an array of objects, hence why we use map(). Return a jsx that represent each post.
-   */
-  const renderPosts = orderedPosts.map((post) => (
-    <article key={post.id}>
-      <h3>{post.title}</h3>
-      <p>{post.content.substring(0, 100)}</p>
-      <p className='postCredit'>
-        <PostAuthor userId={post.userId} />
-        <TimeAgo timestamp={post.date} />
-      </p>
-      <ReactionsButtons post={post} />
-    </article>
-  ));
+  let content;
+  if (postsStatus === 'loading') {
+    content = <p>"Loading..."</p>;
+  } else if (postsStatus === 'succeeded') {
+    const orderedPosts = posts
+      .slice()
+      .sort((a, b) => b.date.localeCompare(a.date));
+    content = orderedPosts.map((post) => (
+      <PostsExcerpt key={post.id} post={post} />
+    ));
+  } else if (postsStatus === 'failed') {
+    content = <p>{error}</p>;
+  }
 
   /*
   Return the JSX representing all the Posts 
@@ -53,7 +41,7 @@ const PostList = () => {
   return (
     <section>
       <h2>Posts</h2>
-      {renderPosts}
+      {content}
     </section>
   );
 };
