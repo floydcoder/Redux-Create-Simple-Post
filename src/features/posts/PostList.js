@@ -1,14 +1,30 @@
-import { useSelector } from 'react-redux';
-import { selectAllPosts } from './postSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  selectAllPosts,
+  getPostsError,
+  getPostsStatus,
+  fetchPosts,
+} from './postSlice';
+import { useEffect } from 'react';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
 import ReactionsButtons from './ReactionsButtons';
 
 const PostList = () => {
+  const dispatch = useDispatch();
   /*
   the posts state is being retrieve from the postSlice 'name' key, which now is globally available through the store provider
    */
   const posts = useSelector(selectAllPosts);
+
+  const postsStatus = useSelector(getPostsStatus);
+  const error = useSelector(getPostsError);
+
+  useEffect(() => {
+    if (postsStatus === 'idle') {
+      dispatch(fetchPosts());
+    }
+  }, [postsStatus, dispatch]);
 
   /*
     order the post by the most recent one to the latest.
