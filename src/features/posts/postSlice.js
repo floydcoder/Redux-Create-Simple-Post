@@ -6,7 +6,7 @@ import axios from 'axios';
 const POST_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 /**
- * an Object representing the initial state of the posts
+ * an Object representing the state of the posts
  * posts: array -> contains all the posts objects
  * status: string -> is the current status of the posts when syncronized to the API
  * error: if any error occur
