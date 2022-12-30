@@ -5,9 +5,14 @@ import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
 import ReactionButtons from './ReactionsButtons';
 
+import { useParams } from 'react-router-dom';
+
 const SinglePostPage = () => {
   // retrieve postId
-  const post = useSelector((state) => selectPostById(state, postId));
+  const { postId } = useParams();
+  console.log(postId);
+  const post = useSelector((state) => selectPostById(state, Number(postId)));
+  console.log(post);
 
   // if post is not found
   if (!post) {
