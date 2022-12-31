@@ -42,12 +42,7 @@ const PostList = () => {
   /*
   Return the JSX representing all the Posts as content 
   */
-  return (
-    <section>
-      <h2>Posts</h2>
-      {content}
-    </section>
-  );
+  return <section>{content}</section>;
 };
 
 export default PostList;
