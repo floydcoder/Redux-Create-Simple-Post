@@ -39,6 +39,20 @@ export const updatePost = createAsyncThunk(
       const response = await axios.put(`${POST_URL}/${id}`, initialPost);
       return response.data;
     } catch (err) {
+      return initialPost; // only for testing redux
+    }
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  'posts/deletePost',
+  async (initialPost) => {
+    const { id } = initialPost;
+    try {
+      const response = await axios.delete(`${POST_URL}/${id}`);
+      if (response?.status === 200) return initialPost;
+      return `${response?.status}: ${response?.statusText}`;
+    } catch (err) {
       return err.message;
     }
   }
@@ -139,6 +153,16 @@ const postSlice = createSlice({
         action.payload.date = new Date().toISOString();
         const posts = state.posts.filter((post) => post.id !== id);
         state.posts = [...posts, action.payload];
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        if (!action.payload?.id) {
+          console.log('Delete could not complete');
+          console.log(action.payload);
+          return;
+        }
+        const { id } = action.payload;
+        const posts = state.posts.filter((post) => post.id !== id);
+        state.posts = posts;
       });
   },
 });
